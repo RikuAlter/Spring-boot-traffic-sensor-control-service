@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class TrafficSignalServiceCommandLineRunner implements CommandLineRunner{
 
 	@Autowired
-	private TrafficSignalSensorRepository trafficSignalSensorRepository;
+	private TrafficSignalDAOService trafficSignalSensorRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
