@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 public class TrafficSignalServiceCommandLineRunner implements CommandLineRunner{
 
 	@Autowired
-	private TrafficSignalDAOService trafficSignalSensorRepository;
+	private TrafficSignalDAOService trafficSignalDAOService;
 
 	@Override
 	public void run(String... args) throws Exception {
-		trafficSignalSensorRepository.findAll();
+		trafficSignalDAOService.findAll();
 	}
 	
 }
