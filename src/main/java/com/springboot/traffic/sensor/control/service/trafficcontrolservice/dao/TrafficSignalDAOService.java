@@ -22,4 +22,10 @@ public class TrafficSignalDAOService{
 	public PoleData findById(String id) {
 		return entityManager.find(PoleData.class, id);
 	}
+	
+	public PoleData update(String id, String status) {
+		final PoleData sensor = findById(id);
+		sensor.setStatus(status);
+		return entityManager.merge(sensor);
+	}
 }
