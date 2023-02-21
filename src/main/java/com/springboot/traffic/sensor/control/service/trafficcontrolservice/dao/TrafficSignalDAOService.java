@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
 import com.springboot.traffic.sensor.control.service.trafficcontrolservice.dtos.PoleData;
 
 @Component
+@Transactional
 public class TrafficSignalDAOService{
 	
 	@Autowired
@@ -19,13 +21,11 @@ public class TrafficSignalDAOService{
 		return entityManager.createNamedQuery("PoleData.findAll", PoleData.class).getResultList();
 	}
 	
-	public PoleData findById(String id) {
+	public PoleData findById(final String id) {
 		return entityManager.find(PoleData.class, id);
 	}
 	
-	public PoleData update(String id, String status) {
-		final PoleData sensor = findById(id);
-		sensor.setStatus(status);
+	public PoleData update(final PoleData sensor) {
 		return entityManager.merge(sensor);
 	}
 }
