@@ -6,7 +6,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 
 @Entity
-@NamedQueries(value = { @NamedQuery(name = "findAll", query = "Select e from sensor e") })
+@NamedQueries(value = { @NamedQuery(name = "PoleData.findAll", query = "Select e from sensor e") })
 public class PoleData {
 
 	@Id
