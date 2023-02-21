@@ -4,9 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 
 @Entity
-@NamedQueries(value = { @NamedQuery(name = "PoleData.findAll", query = "Select e from sensor e") })
+@Table(name = "sensor")
+@NamedQueries(value = { @NamedQuery(name = "PoleData.findAll", query = "SELECT e FROM PoleData e") })
 public class PoleData {
 
 	@Id
@@ -14,6 +16,10 @@ public class PoleData {
 	private String status;
 	private String direction;
 	private String location;
+
+	public PoleData() {
+		
+	}
 
 	public PoleData(String id, String status, String direction, String location) {
 		super();

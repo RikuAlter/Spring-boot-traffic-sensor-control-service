@@ -1,0 +1,4 @@
+insert into sensor values
+('000-001', 'Green', 'East', 'Ranaghat-01'),
+('000-002', 'Red', 'North', 'Ranaghat-02'),
+('000-003', 'Yellow', 'South', 'Ranaghat-03');
