@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
-import com.springboot.traffic.sensor.control.service.trafficcontrolservice.dtos.PoleData;
+import com.springboot.traffic.sensor.control.service.trafficcontrolservice.dtos.Sensor;
 
 @Component
 @Transactional
@@ -17,15 +17,15 @@ public class TrafficSignalDAOService{
 	@Autowired
 	private EntityManager entityManager;
 	
-	public List<PoleData> findAll(){
-		return entityManager.createNamedQuery("PoleData.findAll", PoleData.class).getResultList();
+	public List<Sensor> findAll(){
+		return entityManager.createNamedQuery("Sensor.findAll", Sensor.class).getResultList();
 	}
 	
-	public PoleData findById(final String id) {
-		return entityManager.find(PoleData.class, id);
+	public Sensor findById(final String id) {
+		return entityManager.find(Sensor.class, id);
 	}
 	
-	public PoleData update(final PoleData sensor) {
+	public Sensor update(final Sensor sensor) {
 		return entityManager.merge(sensor);
 	}
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.traffic.sensor.control.service.trafficcontrolservice.dao.TrafficSignalDAOService;
-import com.springboot.traffic.sensor.control.service.trafficcontrolservice.dtos.PoleData;
+import com.springboot.traffic.sensor.control.service.trafficcontrolservice.dtos.Sensor;
 
 @RestController
 public class TrafficSignalServiceController {
@@ -20,17 +20,17 @@ public class TrafficSignalServiceController {
 	private TrafficSignalDAOService trafficSignalDAOService;
 	
 	@RequestMapping("/sensors")
-	public List<PoleData> retrieveAllTrafficPoleData(){
+	public List<Sensor> retrieveAllTrafficPoleData(){
 		return trafficSignalDAOService.findAll();
 	}
 	
 	@GetMapping(path = "/sensors/{id}")
-	public PoleData retrievePoleDataById(@PathVariable String id) {
+	public Sensor retrievePoleDataById(@PathVariable String id) {
 		return trafficSignalDAOService.findById(id);
 	}
 	
 	@PatchMapping(path = "/sensors")
-	public void updatePoleData(@RequestBody PoleData sensor) {
+	public void updatePoleData(@RequestBody Sensor sensor) {
 		trafficSignalDAOService.update(sensor);
 	}
 }
