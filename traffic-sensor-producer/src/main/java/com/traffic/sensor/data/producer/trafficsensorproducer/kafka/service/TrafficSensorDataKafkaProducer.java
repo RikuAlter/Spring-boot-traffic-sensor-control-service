@@ -12,25 +12,38 @@ import org.springframework.stereotype.Service;
 import com.traffic.sensor.data.producer.trafficsensorproducer.dao.TrafficSensorDataProducerErrorLogDAOService;
 import com.traffic.sensor.data.producer.trafficsensorproducer.dto.LogEntry;
 import com.traffic.sensor.data.producer.trafficsensorproducer.dto.Sensor;
+import com.traffic.sensor.data.producer.trafficsensorproducer.validator.TrafficControlServiceMessageValidator;
 
 @Service
 public class TrafficSensorDataKafkaProducer {
 	
 	private static final String KAFKAERROR = "Apache Kafka Error";
+	private static final String INVALIDSTATE = "Invalid sensor state";
 
 	@Autowired
 	private KafkaTemplate<String, Sensor> kafkaTemplate;
 	@Autowired
 	private TrafficSensorDataProducerErrorLogDAOService trafficSensorDataProducerErrorLogDAOService;
+	@Autowired
+	private TrafficControlServiceMessageValidator trafficControlServiceMessageValidator;
 	
 	public void sendMessage(Sensor message) {
-		CompletableFuture<SendResult<String, Sensor>> future =kafkaTemplate.send(null, message);
-		future.whenComplete((success, ex) ->{
-			if(!(Objects.isNull(ex))) {
-				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				String sensorId = message.getId();
-				trafficSensorDataProducerErrorLogDAOService.updateEntry(new LogEntry(sensorId, timestamp, message, KAFKAERROR));
-			} 
-		});
+		
+		if(trafficControlServiceMessageValidator.isValidMessage(message)) {
+			CompletableFuture<SendResult<String, Sensor>> future =kafkaTemplate.send(null, message);
+			future.whenComplete((success, ex) ->{
+				if(!(Objects.isNull(ex))) {
+					logError(message, KAFKAERROR);
+				} 
+			});
+		} else {
+			logError(message, INVALIDSTATE);
+		}
+	}
+	
+	private void logError(Sensor message, String reason) {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String sensorId = message.getId();
+		trafficSensorDataProducerErrorLogDAOService.updateEntry(new LogEntry(sensorId, timestamp, message, reason));
 	}
 }

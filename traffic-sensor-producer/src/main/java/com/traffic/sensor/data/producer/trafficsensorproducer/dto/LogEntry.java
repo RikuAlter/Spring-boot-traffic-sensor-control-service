@@ -2,6 +2,7 @@ package com.traffic.sensor.data.producer.trafficsensorproducer.dto;
 
 import java.sql.Timestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
@@ -15,6 +16,7 @@ public class LogEntry {
 	private String sensor_id;
 	@Id
 	private Timestamp timestamp;
+	@Column(name = "message")
 	private Sensor message;
 	private String reason;
 
