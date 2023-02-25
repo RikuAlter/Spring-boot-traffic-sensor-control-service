@@ -2,7 +2,6 @@ package com.traffic.sensor.data.producer.trafficsensorproducer.dto;
 
 import java.sql.Timestamp;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
@@ -16,18 +15,17 @@ public class LogEntry {
 	private String sensor_id;
 	@Id
 	private Timestamp timestamp;
-	@Column(name = "message")
-	private Sensor message;
+	private String sensor_loc;
 	private String reason;
 
 	public LogEntry() {
 	}
 
-	public LogEntry(String sensor_id, Timestamp timestamp, Sensor message, String reason) {
+	public LogEntry(String sensor_id, Timestamp timestamp, String sensor_loc, String reason) {
 		super();
 		this.sensor_id = sensor_id;
 		this.timestamp = timestamp;
-		this.message = message;
+		this.sensor_loc = sensor_loc;
 		this.reason = reason;
 	}
 
@@ -47,12 +45,12 @@ public class LogEntry {
 		this.timestamp = timestamp;
 	}
 
-	public Sensor getMessage() {
-		return message;
+	public String getMessage() {
+		return sensor_loc;
 	}
 
-	public void setMessage(Sensor message) {
-		this.message = message;
+	public void setMessage(String sensor_loc) {
+		this.sensor_loc = sensor_loc;
 	}
 
 	public String getReason() {
@@ -66,7 +64,7 @@ public class LogEntry {
 	@Override
 	public String toString() {
 		return "TrafficSensorDataProducerErrorLogDAOService [sensor_id=" + sensor_id + ", timestamp=" + timestamp
-				+ ", message=" + message + ", reason=" + reason + "]";
+				+ ", message=" + sensor_loc + ", reason=" + reason + "]";
 	}
 
 }

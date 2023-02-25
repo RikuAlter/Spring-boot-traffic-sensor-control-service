@@ -2,3 +2,11 @@ insert into sensor values
 ('000-001', 'East', 'Green', 'Ranaghat-01'),
 ('000-002', 'North', 'Red', 'Ranaghat-02'),
 ('000-003', 'South', 'Yellow', 'Ranaghat-03');
+
+
+{
+    "id": "000-001",
+    "direction": "Ranaghat-01",
+    "status": "East",
+    "location": "Green"
+}

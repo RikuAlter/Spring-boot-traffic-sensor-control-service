@@ -30,7 +30,7 @@ public class TrafficSensorDataKafkaProducer {
 	public void sendMessage(Sensor message) {
 		
 		if(trafficControlServiceMessageValidator.isValidMessage(message)) {
-			CompletableFuture<SendResult<String, Sensor>> future =kafkaTemplate.send(null, message);
+			CompletableFuture<SendResult<String, Sensor>> future =kafkaTemplate.send("traffic-sensor-topic", message);
 			future.whenComplete((success, ex) ->{
 				if(!(Objects.isNull(ex))) {
 					logError(message, KAFKAERROR);
@@ -43,7 +43,6 @@ public class TrafficSensorDataKafkaProducer {
 	
 	private void logError(Sensor message, String reason) {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		String sensorId = message.getId();
-		trafficSensorDataProducerErrorLogDAOService.updateEntry(new LogEntry(sensorId, timestamp, message, reason));
+		trafficSensorDataProducerErrorLogDAOService.updateEntry(new LogEntry(message.getId(), timestamp,message.getLocation(), reason));
 	}
 }

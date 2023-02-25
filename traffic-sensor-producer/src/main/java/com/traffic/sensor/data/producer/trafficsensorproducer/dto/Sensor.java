@@ -1,7 +1,10 @@
 package com.traffic.sensor.data.producer.trafficsensorproducer.dto;
 
-public class Sensor {
+import java.io.Serializable;
 
+public class Sensor implements Serializable{
+
+	private static final long serialVersionUID = 1717198103569833691L;
 	private String id;
 	private String location;
 	private String direction;

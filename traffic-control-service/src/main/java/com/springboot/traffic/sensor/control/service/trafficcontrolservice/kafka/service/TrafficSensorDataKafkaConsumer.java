@@ -13,7 +13,7 @@ public class TrafficSensorDataKafkaConsumer {
 	@Autowired
 	private TrafficSignalDAOService trafficSignalDAOService;
 	
-	@KafkaListener(topics = "$(topic.kafka)", containerFactory = "kafkaListenerContainerFactory")
+	@KafkaListener(topics = "traffic-sensor-topic", containerFactory = "kafkaListenerContainerFactory")
 	public void consume(Sensor sensor) {
 		trafficSignalDAOService.update(sensor);
 	}
