@@ -68,7 +68,7 @@ public class TrafficControlErrorEmailMessagingService {
 	public String fetchIssueList(String recipient) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		if (recipient == KAFKABROKER)
+		if (recipient.equalsIgnoreCase(KAFKABROKER))
 			return objectMapper.writeValueAsString(trafficControlErrorReportingDAOService.findKafkaIssues());
 		else
 			return objectMapper.writeValueAsString(trafficControlErrorReportingDAOService.findSensorIssues());

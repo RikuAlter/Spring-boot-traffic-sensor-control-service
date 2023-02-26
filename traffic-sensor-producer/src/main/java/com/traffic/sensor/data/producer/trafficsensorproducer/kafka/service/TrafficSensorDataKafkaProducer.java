@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.traffic.sensor.data.producer.trafficsensorproducer.dao.TrafficSensorDataProducerErrorLogDAOService;
 import com.traffic.sensor.data.producer.trafficsensorproducer.dto.LogEntry;
+import com.traffic.sensor.data.producer.trafficsensorproducer.dto.LogEntryId;
 import com.traffic.sensor.data.producer.trafficsensorproducer.dto.Sensor;
 import com.traffic.sensor.data.producer.trafficsensorproducer.validator.TrafficControlServiceMessageValidator;
 
@@ -43,6 +44,6 @@ public class TrafficSensorDataKafkaProducer {
 	
 	private void logError(Sensor message, String reason) {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		trafficSensorDataProducerErrorLogDAOService.updateEntry(new LogEntry(message.getId(), timestamp,message.getLocation(), reason));
+		trafficSensorDataProducerErrorLogDAOService.updateEntry(new LogEntry(new LogEntryId(message.getId(), timestamp), message.getLocation(), reason));
 	}
 }

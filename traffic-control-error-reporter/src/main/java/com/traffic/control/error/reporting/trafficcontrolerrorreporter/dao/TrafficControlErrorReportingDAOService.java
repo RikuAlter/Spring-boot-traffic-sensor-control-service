@@ -26,10 +26,10 @@ public class TrafficControlErrorReportingDAOService {
 	}
 	
 	public List<LogEntry> findKafkaIssues(){
-		return findAll().stream().filter(issue -> issue.getReason() == KAFKAERROR).collect(Collectors.toList());
+		return findAll().stream().filter(issue -> issue.getReason().equalsIgnoreCase(KAFKAERROR)).collect(Collectors.toList());
 	}
 	
 	public List<LogEntry> findSensorIssues(){
-		return findAll().stream().filter(issue -> issue.getReason() == INVALIDSTATE).collect(Collectors.toList());
+		return findAll().stream().filter(issue -> issue.getReason().equalsIgnoreCase(INVALIDSTATE)).collect(Collectors.toList());
 	}
 }

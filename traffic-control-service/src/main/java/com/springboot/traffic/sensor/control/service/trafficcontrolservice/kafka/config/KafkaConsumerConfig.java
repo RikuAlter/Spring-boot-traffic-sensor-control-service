@@ -1,5 +1,7 @@
 package com.springboot.traffic.sensor.control.service.trafficcontrolservice.kafka.config;
 
+import java.util.Map;
+
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +22,8 @@ public class KafkaConsumerConfig {
 
 	@Bean
 	public ConsumerFactory<String, Sensor> consumerFactory(KafkaProperties kafkaProperties){
-		return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties(), new StringDeserializer(), new JsonDeserializer<>(Sensor.class));
+		Map<String, Object> config = kafkaProperties.buildConsumerProperties();
+		return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(Sensor.class));
 	}
 	
 	@Bean

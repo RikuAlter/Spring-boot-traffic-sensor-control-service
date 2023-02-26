@@ -31,7 +31,7 @@ public class TrafficSensorProducerController {
 	
 	@GetMapping("/errorlog/{id}")
 	public List<LogEntry> retrieveAllErrorLogForSensor(@PathVariable String id){
-		return trafficSensorDataProducerErrorLogDAOService.findAll().stream().filter(logEntry -> id == logEntry.getSensor_id()).collect(Collectors.toList());
+		return trafficSensorDataProducerErrorLogDAOService.findAll().stream().filter(logEntry -> id == logEntry.getLogEntryId().getSensor_id()).collect(Collectors.toList());
 	}
 	
 	@PostMapping("/test-producer")

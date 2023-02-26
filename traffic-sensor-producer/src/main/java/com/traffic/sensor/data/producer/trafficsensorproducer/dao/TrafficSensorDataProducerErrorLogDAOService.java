@@ -22,6 +22,7 @@ public class TrafficSensorDataProducerErrorLogDAOService {
 	}
 	
 	public LogEntry updateEntry(final LogEntry logEntry) {
+		System.out.println(logEntry);
 		return entityManager.merge(logEntry);
 	}
 }
