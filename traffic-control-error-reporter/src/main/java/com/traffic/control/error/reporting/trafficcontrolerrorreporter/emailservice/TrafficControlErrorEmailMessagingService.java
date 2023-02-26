@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,25 +45,11 @@ public class TrafficControlErrorEmailMessagingService {
 	private static final String KAFKABROKER = "kafka";
 
 	public void sendMessage(String recipient) throws JsonProcessingException {
-		SimpleMailMessage message = new SimpleMailMessage();
-		String receiver="";
-		String messageText=fetchIssueList(recipient);
-		String messageSubject="";
 		
-		message.setFrom(senderId);
-		if(recipient.equalsIgnoreCase(KAFKABROKER)) {
-			receiver=kafkaRecipient;
-			messageText=kafkaMailText + " " + messageText;
-			messageSubject=kafkaSubject;
-		} else {
-			receiver=maintainanceRecipient;
-			messageText=maintainanceMailText + " " + messageText;
-			messageSubject=maintainanceSubject;
-		}
-		message.setTo(receiver);
-		message.setSubject(messageSubject);
-		message.setText(messageText);
-		javaMailSender.send(message);
+		if(recipient.equalsIgnoreCase(KAFKABROKER))
+			sendMessageKafka();
+		else
+			sendMessageMaintainance();
 	}
 
 	public String fetchIssueList(String recipient) throws JsonProcessingException {
@@ -72,5 +59,35 @@ public class TrafficControlErrorEmailMessagingService {
 			return objectMapper.writeValueAsString(trafficControlErrorReportingDAOService.findKafkaIssues());
 		else
 			return objectMapper.writeValueAsString(trafficControlErrorReportingDAOService.findSensorIssues());
+	}
+	
+	@Scheduled(fixedDelay = 120000)
+	public void sendMessageKafka() throws JsonProcessingException {
+		SimpleMailMessage message = new SimpleMailMessage();
+		String messageList = fetchIssueList(KAFKABROKER);
+		if(messageList.length()>3) {
+			String messageText = kafkaMailText + " " + messageList;
+			message.setFrom(senderId);
+			message.setTo(kafkaRecipient);
+			message.setSubject(kafkaSubject);
+			message.setText(messageText);
+			javaMailSender.send(message);
+			trafficControlErrorReportingDAOService.dropKafkaValues();
+		}
+	}
+	
+	@Scheduled(fixedDelay = 120000)
+	public void sendMessageMaintainance() throws JsonProcessingException {
+		SimpleMailMessage message = new SimpleMailMessage();
+		String messageList = fetchIssueList("Maintainance");
+		if(messageList.length()>3) {
+			String messageText = maintainanceMailText + " " + messageList;
+			message.setFrom(senderId);
+			message.setTo(maintainanceRecipient);
+			message.setSubject(maintainanceSubject);
+			message.setText(messageText);
+			javaMailSender.send(message);
+			trafficControlErrorReportingDAOService.dropSensorValues();
+		}
 	}
 }

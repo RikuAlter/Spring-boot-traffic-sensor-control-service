@@ -8,7 +8,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "logentry")
-@NamedQueries(value = { @NamedQuery(name = "LogEntry.findAll", query = "SELECT e FROM LogEntry e") })
+@NamedQueries(value = { @NamedQuery(name = "LogEntry.findAll", query = "SELECT e FROM LogEntry e"), 
+						@NamedQuery(name = "LogEntry.dropBroker", query = "DELETE FROM LogEntry e WHERE e.reason = :reason") })
 public class LogEntry {
 
 	@EmbeddedId

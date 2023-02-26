@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.traffic.control.error.reporting.trafficcontrolerrorreporter.dto.LogEntry;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 
 @Component
@@ -31,5 +32,17 @@ public class TrafficControlErrorReportingDAOService {
 	
 	public List<LogEntry> findSensorIssues(){
 		return findAll().stream().filter(issue -> issue.getReason().equalsIgnoreCase(INVALIDSTATE)).collect(Collectors.toList());
+	}
+	
+	public void dropKafkaValues() {
+		Query dropKafkaQuery = entityManager.createNamedQuery("LogEntry.dropBroker");
+		dropKafkaQuery.setParameter("reason", KAFKAERROR);
+		dropKafkaQuery.executeUpdate();
+	}
+	
+	public void dropSensorValues() {
+		Query dropSensorQuery = entityManager.createNamedQuery("LogEntry.dropBroker");
+		dropSensorQuery.setParameter("reason", INVALIDSTATE);
+		dropSensorQuery.executeUpdate();
 	}
 }
