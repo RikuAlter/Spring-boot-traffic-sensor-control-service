@@ -34,8 +34,8 @@ public class TrafficSensorProducerController {
 		return trafficSensorDataProducerErrorLogDAOService.findAll().stream().filter(logEntry -> id == logEntry.getLogEntryId().getSensor_id()).collect(Collectors.toList());
 	}
 	
-	@PostMapping("/test-producer")
-	public void testKafkaProducer(@RequestBody Sensor sensor) {
+	@PostMapping("/invoke-producer")
+	public void invokeKafkaProducer(@RequestBody Sensor sensor) {
 		trafficSensorDataKafkaProducer.sendMessage(sensor);
 	}
 }

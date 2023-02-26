@@ -33,12 +33,8 @@ public class TrafficSignalServiceController {
 	}
 	
 	@PatchMapping(path = "/sensors")
-	public void updatePoleData(@RequestBody Sensor sensor) {
+	public String updatePoleData(@RequestBody Sensor sensor) {
 		trafficSignalDAOService.update(sensor);
-	}
-	
-	@PatchMapping(path = "/updatesensor/{id}")
-	public String updateSensorDirect(@PathVariable String id, @RequestBody Sensor message) {
-		return trafficControlSensorCommunicationService.doCallSensorService(id, message);
+		return trafficControlSensorCommunicationService.doCallSensorService(sensor.getId(), sensor);
 	}
 }
