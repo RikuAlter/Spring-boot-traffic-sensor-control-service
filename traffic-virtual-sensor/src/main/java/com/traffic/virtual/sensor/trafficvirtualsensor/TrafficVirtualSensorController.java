@@ -1,6 +1,6 @@
 package com.traffic.virtual.sensor.trafficvirtualsensor;
 
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +16,9 @@ public class TrafficVirtualSensorController {
 	
 	private Sensor sensor = new Sensor(sensorID, sensorLoc, sensorStatus, sensorDirection);
 
-	@PatchMapping("/sensor")
+	@PostMapping("/sensor/000-001")
 	public Sensor updateSensor(@RequestBody Sensor message) {
+		sensor.setId(message.getId());
 		sensor.setStatus(message.getStatus());
 		sensor.setLocation(message.getLocation());
 		sensor.setDirection(message.getDirection());

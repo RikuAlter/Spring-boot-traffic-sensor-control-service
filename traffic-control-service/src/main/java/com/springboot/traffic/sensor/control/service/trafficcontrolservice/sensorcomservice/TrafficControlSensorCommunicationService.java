@@ -34,7 +34,7 @@ public class TrafficControlSensorCommunicationService {
 	public String doCallSensorService(String sensorId, Sensor message) {
 		String sensorURI = sensorProtocol + "://" + sensorHost + ":" + sensorPort + "/" + sensorGroupURI + "/" + sensorId;
 		RestTemplate restTemplate = new RestTemplate();
-		Sensor response = restTemplate.patchForObject(sensorURI, message, Sensor.class);
+		Sensor response = restTemplate.postForObject(sensorURI, message, Sensor.class);
 		if(response != null)
 			return "Success";
 		else
