@@ -1,5 +1,6 @@
 package com.traffic.virtual.sensor.trafficvirtualsensor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,13 +16,17 @@ public class TrafficVirtualSensorController {
 	private String sensorStatus = "Red";
 	
 	private Sensor sensor = new Sensor(sensorID, sensorLoc, sensorStatus, sensorDirection);
+	
+	@Autowired
+	private TrafficControlProducerCommunicationService trafficControlProducerCommunicationService;
 
-	@PostMapping("/sensor/000-001")
+	@PostMapping("/sensor/{id}")
 	public Sensor updateSensor(@RequestBody Sensor message) {
 		sensor.setId(message.getId());
 		sensor.setStatus(message.getStatus());
 		sensor.setLocation(message.getLocation());
 		sensor.setDirection(message.getDirection());
+		trafficControlProducerCommunicationService.doCallProducerService(message);
 		return sensor;
 	}
 }

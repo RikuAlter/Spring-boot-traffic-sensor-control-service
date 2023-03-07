@@ -1,4 +1,117 @@
-version: '3.7'
+version: '3'
 
 services:
+  postgresqldb:
+    image: postgres
+    container_name: postgresqldb
+    ports:
+      - "5432:5432"
+    networks:
+      - traffic-control-network
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
   
+  pgadmin:
+    image: dpage/pgadmin4:6
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@email.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+    - "5050:5050"
+    networks:
+      - traffic-control-network
+      
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - traffic-control-network
+      
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - traffic-control-network
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_CREATE_TOPICS="traffic-sensor-topic"
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+    depends_on:
+      - zookeeper
+      
+  traffic-control-error-reporter:
+    image: rikualter/v1-traffic-control-error-reporter:0.0.1-SNAPSHOT
+    ports:
+      - "8090:8090"
+    restart: on-failure
+    networks:
+      - traffic-control-network
+    depends_on:
+      - postgresqldb
+    environment:
+      SPRING.DATASOURCE.URL: jdbc:postgresql://postgresqldb:5432/errordb
+      SPRING.DATASOURCE.USERNAME: ${DB_USERNAME}
+      SPRING.DATASOURCE.PASSWORD: ${DB_PASSWORD}
+      SPRING.MAIL.USERNAME: ${MAIL_SENDER}
+      SPRING.MAIL.PASSWORD: ${MAIL_PASSWORD}
+      TRAFFIC.CONTROL.EMAIL.KAFKA.SUPPORT.RECIPIENT: ${MAIL_RECIPIENT}
+      TRAFFIC.CONTROL.EMAIL.MAINTAINANCE.RECIPIENT: ${MAIL_RECIPIENT}
+      
+  traffic-control-service:
+    image: rikualter/v1-traffic-control-service:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    networks:
+      - traffic-control-network
+    depends_on:
+      - postgresqldb
+      - zookeeper
+      - kafka
+    environment:
+      SPRING.DATASOURCE.URL: jdbc:postgresql://postgresqldb:5432/sensordb
+      SPRING.DATASOURCE.USERNAME: ${DB_USERNAME}
+      SPRING.DATASOURCE.PASSWORD: ${DB_PASSWORD}
+      SPRING.KAFKA.CONSUMER.BOOTSTRAP-SERVERS: kafka:9092
+      TRAFFIC.SENSOR.HOST: traffic-virtual-sensor
+      
+  traffic-sensor-producer:
+    image: rikualter/v1-traffic-sensor-producer:0.0.1-SNAPSHOT
+    ports:
+      - "8070:8070"
+    restart: on-failure
+    networks:
+      - traffic-control-network
+    depends_on:
+      - postgresqldb
+      - zookeeper
+      - kafka
+    environment:
+      SPRING.DATASOURCE.URL: jdbc:postgresql://postgresqldb:5432/errordb
+      SPRING.DATASOURCE.USERNAME: ${DB_USERNAME}
+      SPRING.DATASOURCE.PASSWORD: ${DB_PASSWORD}
+      SPRING.KAFKA.PRODUCER.BOOTSTRAP-SERVERS: kafka:9092
+      
+  traffic-virtual-sensor:
+    image: rikualter/v1-traffic-virtual-sensor:0.0.1-SNAPSHOT
+    ports:
+      - "8060:8060"
+    networks:
+      - traffic-control-network
+    environment:
+      TRAFFIC.CONTROL.PRODUCER: http://traffic-sensor-producer:8070/invoke-producer
+networks:
+  traffic-control-network:
+volumes:
+  pgdata:
